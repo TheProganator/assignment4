@@ -1,0 +1,43 @@
+% %%%%%%% Part 4
+% % 
+% % A) If the output voltage was changed to a non-linear representation for 
+% the current it would have to be represented in the B matrix of the MNA
+% form 
+% 
+% B) the B matrix would have to be inlcuded when making the caculation.
+% instead of using the 
+%
+%
+%As 
+% well there would have to be another variable added to the system of
+% equations. This way there could a value assigned to the B matrix.
+% 
+% 
+% 
+
+%C)
+
+
+% V = [V1    V2            V3     V4     V5            i1  iL  i3];
+G = [-1/R1  1/R1           0       0      0             1   0   0;
+    1/R1 (-1/R1)-(1/R2)    0       0      0             0  -1   0;
+      0      0            -1/R3    0      0             0   1   0;
+      0      0             0   -1/R4    1/R4            0   0   1;
+      0      0             0    1/R4  (-1/R4)-(1/Ro)    0   0   0;
+      1      0             0       0      0             0   0   0;
+      0      1            -1       0      0             0   0   0;
+      0      0             0       1      0             0   0   0]
+
+
+% V =  [V1  V2  V3   V4  V5 i1  iL i3];
+Cm =   [-C   C   0   0   0   0   0  0;
+         C  -C   0   0   0   0   0  0;
+         0   0  -Cn  0   0   0   0  0;
+         0   0   0   0   0   0   0  0;
+         0   0   0   0   0   0   0  0;
+         0   0   0   0   0   0   0  0;
+         0   0   0   0   0   0  -L  0;
+         0   0   0   0   0   0   0  0]
+ 
+ 
+ B = [0 0 0 0 V3/R3 0 0 0]

@@ -1,5 +1,5 @@
-close all
 clear all
+close all
 
 R1 = 1;
 C = 0.25;
@@ -23,7 +23,7 @@ G = [-1/R1  1/R1           0     0      0            1   0   0;
     0      0            0    1/R4 (-1/R4)-(1/Ro)   0   0   0;
     1      0            0      0      0            0   0   0;
     0      1            -1     0      0            0   0   0;
-    0      0            a/R3   1      0            0   0   0];
+    0      0            a/R3   1      0            0   0   0]
 %%%% I think I need to make in a variable rather than a constant
 
 % V = [V1  V2  V3   V4  V5 i1  iL i3];
@@ -34,7 +34,7 @@ Cm =   [-C  C   0   0   0   0   0  0;
     0   0   0   0   0   0   0  0;
     0   0   0   0   0   0   0  0;
     0   0   0   0   0   0  -L  0;
-    0   0   0   0   0   0   0  0];
+    0   0   0   0   0   0   0  0]
 
 %%%%%%%%%%%%%%%% Remember to output the matrices above %%%%%%%%%%%%%%
 
@@ -43,7 +43,7 @@ tstep = 0.001;
 time =0;
 
 
-for m = 1:300
+for m = 1:1000
     n = n + 1;
     
     In = randn*0.001;
@@ -54,27 +54,31 @@ for m = 1:300
     V3(n) = V(3);
     Vo(n) = V(5);
     
-%     figure(1);
-%     hold on
-%     scatter(time,Vin,'r')
-%     title('input voltage')
-%     figure(2)
-%     hold on
-%     scatter(time,V(5),'b')
-%     title('output voltage')
+    figure(10);
+    hold on
+    scatter(time,Vin,'r')
+    title('input voltage')
+    figure(11)
+    hold on
+    scatter(time,V(5),'b')
+    title('output voltage')
        
     time = tstep*n;
 end
 
-figure(3)
-X = fft(V3,length(V3));
-semilogx(1./(tstep:tstep:time),X)
-title('fft')
+freq = 1./(tstep:tstep:time);
+Xin = fft(V3);
+Xout = fftshift(Vo);
 
+figure(12)
+semilogx(freq,Xin,freq,Xout)
+title('fft blue-Vin red-Vout')
+grid on
 
-% figure(1)
-% plot(,V3)
-% title('Vout')
-% figure(2)
-% plot(vin,Vo)
-% title('Vin')
+figure(13)
+Xshiftin = fftshift(Xin);
+Xshiftout = fftshift(Xout);
+semilogx(freq,Xshiftin,freq,Xshiftout)
+grid on
+title('fftshift red-vin blue-vout')
+

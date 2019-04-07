@@ -1,5 +1,5 @@
-close all
 clear all
+close all
 
 R1 = 1;
 C = 0.25;
@@ -110,13 +110,13 @@ clf;
 
 for n = 1:1000 %each step represents a milisecond
 
-%     if time == 0.03
-%         Vin1 = 1;
-%     end
+    if time == 0.03
+        Vin1 = 1;
+    end
     
 %    Vin1 = sin(w2*time);
 
-    Vin1 = exp(-(time-0.06).^2/(2*(0.03)^2));
+%     Vin1 = exp(-(time-0.06).^2/(2*(0.03)^2));
     
     F2 = [0 0 0 0 0 Vin1 0 0];
     A = G+(Cm/deltat);
@@ -125,14 +125,14 @@ for n = 1:1000 %each step represents a milisecond
     V2 = A\(Cm*(V2/deltat)+F2.');
        
     time = tstep*n;
-%     figure(6);
-%     hold on
-%     scatter(time,Vin1,'r')
-%     title('input voltage')
-%     figure(7)
-%     hold on
-%     scatter(time,V2(5),'b')
-%     title('output voltage')
+    figure(6);
+    hold on
+    scatter(time,Vin1,'r')
+    title('input voltage')
+    figure(7)
+    hold on
+    scatter(time,V2(5),'b')
+    title('output voltage')
     
     Vin11(n,1) = Vin1;
     V2o(n,1) = V2(5);
@@ -140,15 +140,18 @@ for n = 1:1000 %each step represents a milisecond
 end
 
 figure(8)
-X = abs(fft(Vin11)); %fft(Vin11,length(Vin11));
-semilogx(1./(deltat:deltat:time),X)
-title('fft')
+Xin = fft(Vin11); %fft(Vin11,length(Vin11));
+Xout = fft(V2o);
+freq = 1./(deltat:deltat:time);
+semilogx(freq,Xin,freq,Xout)
+title('fft red-vin blue-vout')
 grid on
 figure(9)
-Xshift = fftshift(X);
-semilogx(1./(deltat:deltat:time),Xshift)
+Xshiftin = fftshift(Xin);
+Xshiftout = fftshift(Xout);
+semilogx(freq,Xshiftin,freq,Xshiftout)
 grid on
-title('fftshift')
+title('fftshift red-vin blue-vout')
 
 %%%%%%% It should be noted that as the time step increases the smoother the
 %%%%%%% fourier transform plot becomes. Which would mean it is more 
