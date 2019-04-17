@@ -1,6 +1,3 @@
-clear all
-close all
-
 R1 = 1;
 C = 0.25;
 R2 = 2;
@@ -97,10 +94,12 @@ title('Hist of Gain')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Q2
 
-V2 = zeros(8,1);
+VPulse = zeros(8,1);
+VSin = zeros(8,1);
+VGauss = zeros(8,1);
 tstep = 0.001;
 time =0;
-Vin1 = 0;
+VinPulse = 0;
 deltat = 0.001;
 w2 = 2*pi*(1/0.03);
 figure(6);
@@ -111,47 +110,82 @@ clf;
 for n = 1:1000 %each step represents a milisecond
 
     if time == 0.03
-        Vin1 = 1;
+        VinPulse = 1;
     end
     
-%    Vin1 = sin(w2*time);
+   VinSin = sin(w2*time);
 
-%     Vin1 = exp(-(time-0.06).^2/(2*(0.03)^2));
+   VinGauss = exp(-(time-0.06).^2/(2*(0.03)^2));
     
-    F2 = [0 0 0 0 0 Vin1 0 0];
+    FPulse = [0 0 0 0 0 VinPulse 0 0];
+    FSin = [0 0 0 0 0 VinSin 0 0];
+    FGauss = [0 0 0 0 0 VinGauss 0 0];
     A = G+(Cm/deltat);
     
 %     V2 = A\(0*(V2/deltat)+F2.');
-    V2 = A\(Cm*(V2/deltat)+F2.');
+    VPulse = A\(Cm*(VPulse/deltat)+FPulse.');
+    VSin = A\(Cm*(VSin/deltat)+FSin.');
+    VGauss = A\(Cm*(VGauss/deltat)+FGauss.');
        
     time = tstep*n;
-    figure(6);
-    hold on
-    scatter(time,Vin1,'r')
-    title('input voltage')
-    figure(7)
-    hold on
-    scatter(time,V2(5),'b')
-    title('output voltage')
     
-    Vin11(n,1) = Vin1;
-    V2o(n,1) = V2(5);
+    VinPulseIn(n,1) = VinPulse;
+    VinSinIn(n,1) = VinSin;
+    VinGaussIn(n,1) = VinGauss;
+    
+    VPulseO(n,1) = VPulse(5);
+    VSinO(n,1) = VSin(5);
+    VGaussO(n,1) = VGauss(5);
     
 end
 
+figure(6)
+subplot(3,1,1)
+title('Blue-input Red-output')
+plot(deltat:deltat:time,VinPulseIn,deltat:deltat:time,VPulseO)
+subplot(3,1,2)
+plot(deltat:deltat:time,VinSinIn,deltat:deltat:time,VSinO)
+subplot(3,1,3)
+plot(deltat:deltat:time,VinGaussIn,deltat:deltat:time,VGaussO)
+
+
+figure(7)
+XPulse = abs(fft(VinPulseIn));%fft(Vin11,length(Vin11));
+XSin = abs(fft(VinSinIn));
+XGauss = abs(fft(VinGaussIn));
+XPulseOut = abs(fft(VPulseO));
+XSinOut = abs(fft(VSinO));
+XGaussOut = abs(fft(VGaussO));
+subplot(3,1,1)
+plot(-(time/2-deltat):deltat:time/2,XPulse,-(time/2-deltat):deltat:time/2,XPulseOut)%plot(1./(deltat:deltat:time),X)
+title('fft Blue-input Red-output')
+grid on
+subplot(3,1,2)
+plot(-(time/2-deltat):deltat:time/2,XSin,-(time/2-deltat):deltat:time/2,XSinOut)
+grid on
+subplot(3,1,3)
+plot(-(time/2-deltat):deltat:time/2,XGauss,-(time/2-deltat):deltat:time/2,XGaussOut)
+grid on
+
+
 figure(8)
-Xin = fft(Vin11); %fft(Vin11,length(Vin11));
-Xout = fft(V2o);
-freq = 1./(deltat:deltat:time);
-semilogx(freq,Xin,freq,Xout)
-title('fft red-vin blue-vout')
+XshiftPulse = fftshift(XPulse);
+XshiftSin = fftshift(XSin);
+XshiftGauss = fftshift(XGauss);
+XshiftPulseOut = fftshift(XPulseOut);
+XshiftSinOut = fftshift(XSinOut);
+XshiftGaussOut = fftshift(XGaussOut);
+subplot(3,1,1)
 grid on
-figure(9)
-Xshiftin = fftshift(Xin);
-Xshiftout = fftshift(Xout);
-semilogx(freq,Xshiftin,freq,Xshiftout)
+title('fftshift Blue-input Red-output')
+plot(-(time/2-deltat):deltat:time/2,XshiftPulse,-(time/2-deltat):deltat:time/2,XshiftPulseOut)
+subplot(3,1,2)
 grid on
-title('fftshift red-vin blue-vout')
+plot(-(time/2-deltat):deltat:time/2,XshiftSin,-(time/2-deltat):deltat:time/2,XshiftSinOut)
+subplot(3,1,3)
+plot(-(time/2-deltat):deltat:time/2,XshiftGauss,-(time/2-deltat):deltat:time/2,XshiftGaussOut)
+grid on
+
 
 %%%%%%% It should be noted that as the time step increases the smoother the
 %%%%%%% fourier transform plot becomes. Which would mean it is more 

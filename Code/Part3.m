@@ -1,6 +1,3 @@
-clear all
-close all
-
 R1 = 1;
 C = 0.25;
 R2 = 2;
@@ -38,47 +35,26 @@ Cm =   [-C  C   0   0   0   0   0  0;
 
 %%%%%%%%%%%%%%%% Remember to output the matrices above %%%%%%%%%%%%%%
 
-n = 0;
 tstep = 0.001;
-time =0;
+time = 0;
 
 
-for m = 1:1000
-    n = n + 1;
+for n = 1:300
     
-    In = randn*0.001;
+    In = randn*0.01;
     Vin = exp(-(time-0.06).^2/(2*(0.03)^2));
     
     F = [0 0 In 0 0 Vin 0 0];
     V = G\F';
-    V3(n) = V(3);
     Vo(n) = V(5);
-    
-    figure(10);
-    hold on
-    scatter(time,Vin,'r')
-    title('input voltage')
-    figure(11)
-    hold on
-    scatter(time,V(5),'b')
-    title('output voltage')
-       
+           
     time = tstep*n;
 end
 
-freq = 1./(tstep:tstep:time);
-Xin = fft(V3);
-Xout = fftshift(Vo);
+figure(9)
+plot(tstep:tstep:time,Vo)
 
-figure(12)
-semilogx(freq,Xin,freq,Xout)
-title('fft blue-Vin red-Vout')
-grid on
-
-figure(13)
-Xshiftin = fftshift(Xin);
-Xshiftout = fftshift(Xout);
-semilogx(freq,Xshiftin,freq,Xshiftout)
-grid on
-title('fftshift red-vin blue-vout')
-
+figure(10)
+X = abs(fft(Vo));
+plot(-(time/2-tstep):tstep:time/2,X)
+title('fft')
